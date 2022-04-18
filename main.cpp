@@ -10,6 +10,7 @@
 #include "EBO.h"
 #include "vertexArrayObject.h"
 #include "vertexBufferObject.h"
+#include "Texture.h"
 
 
 
@@ -62,30 +63,8 @@ int main()
     ebo.Unbind();
     GLuint uniID = glGetUniformLocation(shaderProgram.ID, "scale");
 
-    int widthImg, heightImg, numColCh;
-    stbi_set_flip_vertically_on_load(true);
-    unsigned char* bytes = stbi_load("assets/pop_cat.png", &widthImg, &heightImg, &numColCh, 0);
-
-    GLuint texture;
-    glGenTextures(1, &texture);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, widthImg, heightImg, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    stbi_image_free(bytes);
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    GLuint tex0Uni = glGetUniformLocation(shaderProgram.ID, "tex0");
-    shaderProgram.activate();
-    glUniform1ui(tex0Uni, 0);
+    Texture popCat("assets/pop_cat.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+    popCat.texUnit(shaderProgram, "tex0", 0);
 
     while(!glfwWindowShouldClose(window))
     {
@@ -94,13 +73,13 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
         shaderProgram.activate();
         glUniform1f(uniID, 0.5f);
-        glBindTexture(GL_TEXTURE_2D, texture);
+        popCat.Bind();
         vao1.Bind();
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glfwSwapBuffers(window);
 
     }
-    glDeleteTextures(1, &texture);
+    popCat.Delete();
     vao1.Delete();
     vbo1.Delete();
     ebo.Delete();
