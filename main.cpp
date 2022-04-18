@@ -11,7 +11,9 @@
 #include "vertexArrayObject.h"
 #include "vertexBufferObject.h"
 #include "Texture.h"
-
+#include "Libraries/glm/glm/glm.hpp"
+#include "Libraries/glm/glm/gtc/matrix_inverse.hpp"
+#include "Libraries/glm/glm/gtc/type_ptr.hpp"
 
 
 // Vertices coordinates
